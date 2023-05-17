@@ -9,24 +9,32 @@ headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
 
 
-i = 1
-while (i < 51):
-    page_link = (f'https://www.hindustantimes.com/world-news/page-{i}')
+def list_maker():
+    for i in range(1, 51):
+        page_link = (f'https://www.hindustantimes.com/world-news/page-{i}')
 
-    i = i+1
-    try:
-        page = requests.get(page_link, headers=headers)
-        page.raise_for_status()
+        i = i+1
+        try:
+            page = requests.get(page_link, headers=headers)
+            page.raise_for_status()
 
-        if page.status_code == 200:
-            soup1 = BeautifulSoup(page.text, "html.parser")
-            soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
+            if page.status_code == 200:
+                soup1 = BeautifulSoup(page.text, "html.parser")
+                soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-        articles = soup2.find('section', id="dataHolder").find_all(
-            'div', class_="cartHolder")
+            articles = soup2.find('section', id="dataHolder").find_all(
+                'div', class_="cartHolder")
 
-        articles_list.extend(articles)
+            articles_list.extend(articles)
 
-    except Exception as e:
-        print(e)
-print(len(articles_list))
+        except Exception as e:
+            print(e)
+
+
+list_maker()
+
+# for article in articles_list:
+#     print(article)
+#     break
+
+# print(len(articles_list))
