@@ -18,7 +18,7 @@ headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 
 
 def list_maker():
-    for i in range(1, 4):
+    for i in range(1, 51):
         page_link = (f'https://www.hindustantimes.com/world-news/page-{i}')
 
         i = i+1
@@ -43,9 +43,24 @@ list_maker()
 
 for article in articles_list:
 
-    title = article.find('h3', class_='hdg3').a.get_text()
-    title = title.strip()
+    # title = article.find('h3', class_='hdg3').a.get_text()
+    # title = title.strip()
     link = "https://www.hindustantimes.com/" + article.h3.find('a').get('href')
 
-    title_list.append(title)
+    # title_list.append(title)
     link_list.append(link)
+
+try:
+    page = requests.get(link_list[0], headers=headers)
+    page.raise_for_status()
+
+    if page.status_code == 200:
+        soup1 = BeautifulSoup(page.text, "html.parser")
+        soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
+
+    content = soup2.find('div', id="dataHolder")
+
+    # print(content)
+
+except Exception as e:
+    print(e)
