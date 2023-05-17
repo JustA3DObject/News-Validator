@@ -33,8 +33,11 @@ def list_maker():
 
 list_maker()
 
-# for article in articles_list:
-#     print(article)
-#     break
+for article in articles_list:
+
+    title = article.find('h3', class_='hdg3').a.text
+    link = "https://www.hindustantimes.com/" + article.h3.find('a').get('href')
+
+    print(title, link)
 
 # print(len(articles_list))
