@@ -1,6 +1,7 @@
 import requests
 import openpyxl
 from bs4 import BeautifulSoup
+import re
 
 # excel = openpyxl.Workbook()
 # sheet = excel.active
@@ -60,7 +61,13 @@ try:
 
     content = soup2.find('div', id="dataHolder")
 
-    # print(content)
+    title = content.find('h1', class_='hdg1').get_text().strip()
+    title = ' '.join(title.split())
+    date_time = content.find('div', class_='dateTime').get_text().strip()
+
+    for item in content.find_all('p'):
+        body = ' '.join(item.find_all(text=True)).strip()
+        body = ' '.join(body.split())
 
 except Exception as e:
     print(e)
