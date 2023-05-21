@@ -59,15 +59,24 @@ for i in range(len(link_list)):
 
         content = soup2.find('div', id="dataHolder")
 
-        title = content.find('h1', class_='hdg1').get_text().strip()
-        title = ' '.join(title.split())
+        try:
+            title = content.find('h1', class_='hdg1').get_text().strip()
+            title = ' '.join(title.split())
+        except AttributeError:
+            title = Null
 
-        date_time = content.find('div', class_='dateTime').get_text().strip()
+        try:
+            date_time = content.find(
+                'div', class_='dateTime').get_text().strip()
+        except AttributeError:
+            date_time = Null
 
-        body = [x.get_text() for x in content.find_all('p')]
-        body = ' '.join(body)
-        body = ' '.join(body.split())
+        try:
+            body = [x.get_text() for x in content.find_all('p')]
+            body = ' '.join(body)
+            body = ' '.join(body.split())
+        except AttributeError:
+            body = Null
 
-        print(title, date_time, body)
     except Exception as e:
         print(e)
