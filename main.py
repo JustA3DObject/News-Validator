@@ -2,11 +2,10 @@ import requests
 import openpyxl
 from bs4 import BeautifulSoup
 
-# excel = openpyxl.Workbook()
-# sheet = excel.active
-# sheet.title = 'HindustanTimes World News'
-# print(excel.sheetnames)
-# sheet.append(['Title', 'Text', 'Subject', 'Date'])
+excel = openpyxl.Workbook()
+sheet = excel.active
+print(excel.sheetnames)
+sheet.append(['Title', 'Text', 'Subject', 'Date'])
 
 page_link = []
 articles_list = []
@@ -43,40 +42,55 @@ def list_maker():
 
 list_maker()
 
-for article in articles_list:
 
-    link = "https://www.hindustantimes.com/" + article.h3.find('a').get('href')
-    link_list.append(link)
+def link_list_maker():
+    for article in articles_list:
 
-for i in range(len(link_list)):
-    try:
-        page = requests.get(link_list[i], headers=headers)
-        page.raise_for_status()
+        link = "https://www.hindustantimes.com/" + \
+            article.h3.find('a').get('href')
+        link_list.append(link)
 
-        if page.status_code == 200:
-            soup1 = BeautifulSoup(page.text, "html.parser")
-            soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-        content = soup2.find('div', id="dataHolder")
+link_list_maker()
 
+
+def content_fetcher():
+    for i in range(len(link_list)):
         try:
-            title = content.find('h1', class_='hdg1').get_text().strip()
-            title = ' '.join(title.split())
-        except AttributeError:
-            title = Null
+            page = requests.get(link_list[i], headers=headers)
+            page.raise_for_status()
 
-        try:
-            date_time = content.find(
-                'div', class_='dateTime').get_text().strip()
-        except AttributeError:
-            date_time = Null
+            if page.status_code == 200:
+                soup1 = BeautifulSoup(page.text, "html.parser")
+                soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-        try:
-            body = [x.get_text() for x in content.find_all('p')]
-            body = ' '.join(body)
-            body = ' '.join(body.split())
-        except AttributeError:
-            body = Null
+            content = soup2.find('div', id="dataHolder")
 
-    except Exception as e:
-        print(e)
+            try:
+                title = content.find('h1', class_='hdg1').get_text().strip()
+                title = ' '.join(title.split())
+            except AttributeError:
+                title = Null
+
+            try:
+                date_time = content.find(
+                    'div', class_='dateTime').get_text().strip()
+            except AttributeError:
+                date_time = Null
+
+            try:
+                body = [x.get_text() for x in content.find_all('p')]
+                body = ' '.join(body)
+                body = ' '.join(body.split())
+            except AttributeError:
+                body = Null
+
+            sheet.append([title, body, "World News", date_time])
+
+        except Exception as e:
+            print(e)
+
+
+content_fetcher()
+
+excel.save('True News.xlsx')
