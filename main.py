@@ -1,25 +1,27 @@
 import requests
 import openpyxl
 from bs4 import BeautifulSoup
+from openpyxl import load_workbook
 
 excel = openpyxl.Workbook()
 sheet = excel.active
-sheet.title = 'HindustanTimes World News'
+sheet.title = 'HindustanTimes News'
 sheet.append(['Title', 'Text', 'Subject', 'Date'])
 
 page_link = []
 articles_list = []
 title_list = []
 link_list = []
+category = "india-news"
 
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
 
 
-def list_maker():
+def list_maker(category):
     for i in range(1, 51):
-        page_link = (f'https://www.hindustantimes.com/world-news/page-{i}')
+        page_link = (f'https://www.hindustantimes.com/{category}/page-{i}')
 
         i = i+1
         try:
@@ -39,7 +41,7 @@ def list_maker():
             print(e)
 
 
-list_maker()
+list_maker(category)
 
 
 def link_list_maker():
@@ -84,7 +86,7 @@ def content_fetcher():
             except AttributeError:
                 body = Null
 
-            sheet.append([title, body, "World News", date_time])
+            sheet.append([title, body, "India News", date_time])
 
         except Exception as e:
             print(e)
