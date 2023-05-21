@@ -12,7 +12,7 @@ page_link = []
 articles_list = []
 title_list = []
 link_list = []
-category = "india-news"
+category = "entertainment"
 
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -41,6 +41,7 @@ def list_maker(category):
             print(e)
 
 
+print("Fetching Links...")
 list_maker(category)
 
 
@@ -52,6 +53,7 @@ def link_list_maker():
         link_list.append(link)
 
 
+print("Editing Links...")
 link_list_maker()
 
 
@@ -71,27 +73,29 @@ def content_fetcher():
                 title = content.find('h1', class_='hdg1').get_text().strip()
                 title = ' '.join(title.split())
             except AttributeError:
-                title = Null
+                title = "Null"
 
             try:
                 date_time = content.find(
                     'div', class_='dateTime').get_text().strip()
             except AttributeError:
-                date_time = Null
+                date_time = "Null"
 
             try:
                 body = [x.get_text() for x in content.find_all('p')]
                 body = ' '.join(body)
                 body = ' '.join(body.split())
             except AttributeError:
-                body = Null
+                body = "Null"
 
-            sheet.append([title, body, "India News", date_time])
+            sheet.append([title, body, "Entertainment News", date_time])
 
         except Exception as e:
             print(e)
 
 
+print("Fetching Content...")
 content_fetcher()
 
-excel.save('True News.xlsx')
+print("Creating Excel File...")
+excel.save('True News entertainment.xlsx')
