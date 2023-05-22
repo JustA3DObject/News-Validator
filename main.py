@@ -260,8 +260,6 @@ def fetch_theindianexpress_news():
             except Exception as e:
                 print(e)
 
-            print(title, date_time, body)
-
     print("Fetching Content...")
     content_fetcher()
 
