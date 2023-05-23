@@ -2,6 +2,7 @@ import requests
 import openpyxl
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
+import re
 
 page_link = []
 articles_list = []
@@ -13,13 +14,47 @@ headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
 
-
 fetch_values_dictionary = {
-    "website_links": {
-        "hindustantimes": f'https://www.hindustantimes.com/{category}/page-',
-        "ndtv": f'https://www.ndtv.com/{category}/page-',
-        "theindianexpress": f'https://indianexpress.com/section/{category}/page/'
-    }
+    "hindustantimes": {
+        "domain_link": "https://www.hindustantimes.com/",
+        "link": f'https://www.hindustantimes.com/{category}/page-',
+        "range_start": 1,
+        "range_end": 51,
+        "articles_find_element": {
+            "element": "section",
+            "element_class": "listingPage"
+        },
+        "articles_findall_element": {
+            "element": "div",
+            "element_class": "cartHolder",
+        },
+        "link_find_element": {
+            "element": "h3",
+            "element_class": "hdg3",
+        },
+        "content_find_element": {
+            "element": "div",
+            "element_class": "detailPage",
+        },
+        "title_find_element": {
+            "element": "h1",
+            "element_class": "hdg1",
+        },
+        "datetime_find_element": {
+            "element": "div",
+            "element_class": "dateTime",
+        }
+    },
+    "ndtv": {
+        "link": f'https://www.ndtv.com/{category}/page-',
+        "range_start": 1,
+        "range_end": 15,
+    },
+    "theindianexpress": {
+        "link": f'https://indianexpress.com/section/{category}/page/',
+        "range_start": 2,
+        "range_end": 52,
+    },
 }
 
 
@@ -41,9 +76,10 @@ def fetch_hindustantimes_news(fetch_values_dictionary):
 
         print("Fetching Articles...")
 
-        for i in range(1, 51):
+        for i in range(fetch_values_dictionary["hindustantimes"].get("range_start"),
+                       fetch_values_dictionary["hindustantimes"].get("range_end")):
             page_link = (
-                f'{fetch_values_dictionary["website_links"]["hindustantimes"]}{i}')
+                f'{fetch_values_dictionary["hindustantimes"].get("link")}{i}')
 
             i = i+1
             try:
@@ -54,8 +90,11 @@ def fetch_hindustantimes_news(fetch_values_dictionary):
                     soup1 = BeautifulSoup(page.text, "html.parser")
                     soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-                articles = soup2.find('section', id="dataHolder").find_all(
-                    'div', class_="cartHolder")
+                articles = soup2.find(fetch_values_dictionary["hindustantimes"]["articles_find_element"].get("element"),
+                                      class_=fetch_values_dictionary["hindustantimes"]["articles_find_element"].get("element_class")).find_all(
+                    fetch_values_dictionary["hindustantimes"]["articles_findall_element"].get(
+                        "element"),
+                    class_=fetch_values_dictionary["hindustantimes"]["articles_findall_element"].get("element_class"))
 
                 articles_list.extend(articles)
 
@@ -70,9 +109,15 @@ def fetch_hindustantimes_news(fetch_values_dictionary):
 
         for article in articles_list:
 
-            link = "https://www.hindustantimes.com/" + \
-                article.h3.find('a').get('href')
-            link_list.append(link)
+            link = article.find(fetch_values_dictionary["hindustantimes"]["link_find_element"].get("element"),
+                                class_=fetch_values_dictionary["hindustantimes"]["link_find_element"].get("element_class"))
+
+            if link is not None:
+                link = link.find('a').get('href')
+
+                if (len(re.findall(fetch_values_dictionary["hindustantimes"].get("domain_link"), link)) == 0):
+                    link = f'{fetch_values_dictionary["hindustantimes"].get("domain_link")}{link}'
+                link_list.append(link)
 
     link_list_maker()
 
@@ -89,18 +134,60 @@ def fetch_hindustantimes_news(fetch_values_dictionary):
                     soup1 = BeautifulSoup(page.text, "html.parser")
                     soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-                content = soup2.find('div', id="dataHolder")
+                if fetch_values_dictionary["hindustantimes"]["content_find_element"].get("element_class") is not None:
+                    content = soup2.find(
+                        fetch_values_dictionary["hindustantimes"]["content_find_element"].get(
+                            "element"),
+                        class_=fetch_values_dictionary["hindustantimes"]["content_find_element"].get("element_class"))
+                elif fetch_values_dictionary["hindustantimes"]["content_find_element"].get("element_id") is not None:
+                    content = soup2.find(
+                        fetch_values_dictionary["hindustantimes"]["content_find_element"].get(
+                            "element"),
+                        id=fetch_values_dictionary["hindustantimes"]["content_find_element"].get("element_id"))
+                elif fetch_values_dictionary["hindustantimes"]["content_find_element"].get("element_itemprop") is not None:
+                    content = soup2.find(
+                        fetch_values_dictionary["hindustantimes"]["content_find_element"].get(
+                            "element"),
+                        itemprop=fetch_values_dictionary["hindustantimes"]["content_find_element"].get("element_itemprop"))
 
                 try:
-                    title = content.find(
-                        'h1', class_='hdg1').get_text().strip()
+                    if fetch_values_dictionary["hindustantimes"]["title_find_element"].get("element_class") is not None:
+                        title = content.find(
+                            fetch_values_dictionary["hindustantimes"]["title_find_element"].get(
+                                "element"),
+                            class_=fetch_values_dictionary["hindustantimes"]["title_find_element"].get("element_class")).get_text().strip()
+                    elif fetch_values_dictionary["hindustantimes"]["title_find_element"].get("element_id") is not None:
+                        title = content.find(
+                            fetch_values_dictionary["hindustantimes"]["title_find_element"].get(
+                                "element"),
+                            id=fetch_values_dictionary["hindustantimes"]["title_find_element"].get("element_id")).get_text().strip()
+                    elif fetch_values_dictionary["hindustantimes"]["title_find_element"].get("element_id") is not None:
+                        title = content.find(
+                            fetch_values_dictionary["hindustantimes"]["title_find_element"].get(
+                                "element"),
+                            itemprop=fetch_values_dictionary["hindustantimes"]["title_find_element"].get("element_itemprop")).get_text().strip()
+
                     title = ' '.join(title.split())
+
                 except AttributeError:
                     title = "Null"
 
                 try:
-                    date_time = content.find(
-                        'div', class_='dateTime').get_text().strip()
+                    if fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get("element_class") is not None:
+                        date_time = content.find(
+                            fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get(
+                                "element"), class_=fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get("element_class")).get_text().strip()
+                    elif fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get("element_id") is not None:
+                        date_time = content.find(
+                            fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get(
+                                "element"), id=fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get("element_id")).get_text().strip()
+                    elif fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get("element_itemprop") is not None:
+                        date_time = content.find(
+                            fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get(
+                                "element"), itemprop=fetch_values_dictionary["hindustantimes"]["datetime_find_element"].get("element_itemprop")).get_text().strip()
+
+                    date_time = date_time.replace('Updated: ', '')
+
                 except AttributeError:
                     date_time = "Null"
 
@@ -108,10 +195,13 @@ def fetch_hindustantimes_news(fetch_values_dictionary):
                     body = [x.get_text() for x in content.find_all('p')]
                     body = ' '.join(body)
                     body = ' '.join(body.split())
+                    body = body.replace(' Watch Live News: Follow Us:', '')
+                    body = body.replace(' ...view detail', '')
                 except AttributeError:
                     body = "Null"
 
-                sheet.append([title, body, "Entertainment News", date_time])
+                if (title & body & date_time) != "Null":
+                    sheet.append([title, body, "Education News", date_time])
 
             except Exception as e:
                 print(e)
@@ -127,7 +217,7 @@ def fetch_ndtv_news(fetch_values_dictionary):
 
         for i in range(1, 15):
             page_link = (
-                f'{fetch_values_dictionary["website_links"]["ndtv"]}{i}')
+                f'{fetch_values_dictionary["ndtv"]["link"]}{i}')
 
             i = i+1
             try:
@@ -196,7 +286,8 @@ def fetch_ndtv_news(fetch_values_dictionary):
                 except AttributeError:
                     body = "Null"
 
-                sheet.append([title, body, "Science News", date_time])
+                if (title & body & date_time) != "Null":
+                    sheet.append([title, body, "Education News", date_time])
 
             except Exception as e:
                 print(e)
@@ -212,7 +303,7 @@ def fetch_theindianexpress_news(fetch_values_dictionary):
 
         for i in range(2, 52):
             page_link = (
-                f'{fetch_values_dictionary["website_links"]["theindianexpress"]}{i}')
+                f'{fetch_values_dictionary["theindianexpress"]["link"]}{i}')
 
             i = i+1
             try:
@@ -301,5 +392,5 @@ def fetch_theindianexpress_news(fetch_values_dictionary):
 
 # fetch_theindianexpress_news(fetch_values_dictionary)
 
-print("Creating Excel File...")
-excel.save('True News.xlsx')
+# print("Saving Excel File...")
+# excel.save('True News.xlsx')
