@@ -3,33 +3,47 @@ import openpyxl
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 
-# To create a new excel sheet
-'''
-excel = openpyxl.Workbook()
-sheet = excel.active
-sheet.title = 'News'
-sheet.append(['Title', 'Text', 'Subject', 'Date'])
-'''
-
-#  To open an existing sheet
-excel = openpyxl.load_workbook('True News.xlsx')
-sheet = excel.active
-
 page_link = []
 articles_list = []
 title_list = []
 link_list = []
-category = "education"
+category = "world-news"
 
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
 
 
-def fetch_hindustantimes_news():
-    def list_maker(category):
+fetch_values_dictionary = {
+    "website_links": {
+        "hindustantimes": f'https://www.hindustantimes.com/{category}/page-',
+        "ndtv": f'https://www.ndtv.com/{category}/page-',
+        "theindianexpress": f'https://indianexpress.com/section/{category}/page/'
+    }
+}
+
+
+def create_newsheet():
+    excel = openpyxl.Workbook()
+    sheet = excel.active
+    sheet.title = 'News'
+    sheet.append(['Title', 'Text', 'Subject', 'Date'])
+
+
+def append_existingsheet():
+    excel = openpyxl.load_workbook('True News.xlsx')
+    sheet = excel.active
+
+
+def fetch_hindustantimes_news(fetch_values_dictionary):
+
+    def article_fetcher():
+
+        print("Fetching Articles...")
+
         for i in range(1, 51):
-            page_link = (f'https://www.hindustantimes.com/{category}/page-{i}')
+            page_link = (
+                f'{fetch_values_dictionary["website_links"]["hindustantimes"]}{i}')
 
             i = i+1
             try:
@@ -48,20 +62,24 @@ def fetch_hindustantimes_news():
             except Exception as e:
                 print(e)
 
-    print("Fetching Links...")
-    list_maker(category)
+    article_fetcher()
 
     def link_list_maker():
+
+        print("Getting Links...")
+
         for article in articles_list:
 
             link = "https://www.hindustantimes.com/" + \
                 article.h3.find('a').get('href')
             link_list.append(link)
 
-    print("Editing Links...")
     link_list_maker()
 
     def content_fetcher():
+
+        print("Fetching Content...")
+
         for i in range(len(link_list)):
             try:
                 page = requests.get(link_list[i], headers=headers)
@@ -98,16 +116,18 @@ def fetch_hindustantimes_news():
             except Exception as e:
                 print(e)
 
-    print("Fetching Content...")
     content_fetcher()
 
 
-# fetch_hindustantimes_news()
+def fetch_ndtv_news(fetch_values_dictionary):
 
-def fetch_ndtv_news():
-    def list_maker(category):
+    def article_fetcher():
+
+        print("Fetching Articles...")
+
         for i in range(1, 15):
-            page_link = (f'https://www.ndtv.com/{category}/page-{i}')
+            page_link = (
+                f'{fetch_values_dictionary["website_links"]["ndtv"]}{i}')
 
             i = i+1
             try:
@@ -126,10 +146,10 @@ def fetch_ndtv_news():
             except Exception as e:
                 print(e)
 
-    print("Fetching Articles...")
-    list_maker(category)
+    article_fetcher()
 
     def link_list_maker():
+        print("Getting Links...")
         for article in articles_list:
 
             link = article.find('h2', class_='newsHdng')
@@ -137,10 +157,12 @@ def fetch_ndtv_news():
                 link = link.find('a').get('href')
                 link_list.append(link)
 
-    print("Getting Links...")
     link_list_maker()
 
     def content_fetcher():
+
+        print("Fetching Content...")
+
         for i in range(len(link_list)):
             try:
                 page = requests.get(link_list[i], headers=headers)
@@ -179,17 +201,18 @@ def fetch_ndtv_news():
             except Exception as e:
                 print(e)
 
-    print("Fetching Content...")
     content_fetcher()
 
 
-# fetch_ndtv_news()
+def fetch_theindianexpress_news(fetch_values_dictionary):
 
-def fetch_theindianexpress_news():
-    def list_maker(category):
+    def article_fetcher():
+
+        print("Fetching Articles...")
+
         for i in range(2, 52):
             page_link = (
-                f'https://indianexpress.com/section/{category}/page/{i}/')
+                f'{fetch_values_dictionary["website_links"]["theindianexpress"]}{i}')
 
             i = i+1
             try:
@@ -208,10 +231,12 @@ def fetch_theindianexpress_news():
             except Exception as e:
                 print(e)
 
-    print("Fetching Articles...")
-    list_maker(category)
+    article_fetcher()
 
     def link_list_maker():
+
+        print("Getting Links...")
+
         for article in articles_list:
 
             link = article.find('h2', class_='title')
@@ -219,10 +244,12 @@ def fetch_theindianexpress_news():
                 link = link.find('a').get('href')
                 link_list.append(link)
 
-    print("Getting Links...")
     link_list_maker()
 
     def content_fetcher():
+
+        print("Fetching Content...")
+
         for i in range(len(link_list)):
             try:
                 page = requests.get(link_list[i], headers=headers)
@@ -261,11 +288,18 @@ def fetch_theindianexpress_news():
             except Exception as e:
                 print(e)
 
-    print("Fetching Content...")
     content_fetcher()
 
 
-fetch_theindianexpress_news()
+# create_newsheet()
+
+# append_existingsheet()
+
+# fetch_hindustantimes_news(fetch_values_dictionary)
+
+# fetch_ndtv_news(fetch_values_dictionary)
+
+# fetch_theindianexpress_news(fetch_values_dictionary)
 
 print("Creating Excel File...")
 excel.save('True News.xlsx')
