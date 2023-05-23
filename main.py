@@ -43,17 +43,67 @@ fetch_values_dictionary = {
         "datetime_find_element": {
             "element": "div",
             "element_class": "dateTime",
-        }
+        },
     },
     "ndtv": {
+        "domain_link": "https://www.ndtv.com/",
         "link": f'https://www.ndtv.com/{category}/page-',
         "range_start": 1,
         "range_end": 15,
+        "articles_find_element": {
+            "element": "div",
+            "element_class": "lisingNews"
+        },
+        "articles_findall_element": {
+            "element": "div",
+            "element_class": "news_Itm",
+        },
+        "link_find_element": {
+            "element": "h2",
+            "element_class": "newsHdng",
+        },
+        "content_find_element": {
+            "element": "section",
+            "element_class": "col-900",
+        },
+        "title_find_element": {
+            "element": "h1",
+            "element_class": "sp-ttl",
+        },
+        "datetime_find_element": {
+            "element": "span",
+            "element_itemprop": "dateModified",
+        },
     },
     "theindianexpress": {
+        "domain_link": "https://indianexpress.com/",
         "link": f'https://indianexpress.com/section/{category}/page/',
         "range_start": 2,
         "range_end": 52,
+        "articles_find_element": {
+            "element": "div",
+            "element_class": "nation"
+        },
+        "articles_findall_element": {
+            "element": "div",
+            "element_class": "articles",
+        },
+        "link_find_element": {
+            "element": "h2",
+            "element_class": "title",
+        },
+        "content_find_element": {
+            "element": "div",
+            "element_class": "container native_story",
+        },
+        "title_find_element": {
+            "element": "h1",
+            "element_itemprop": "headline",
+        },
+        "datetime_find_element": {
+            "element": "span",
+            "element_itemprop": "dateModified",
+        },
     },
 }
 
