@@ -6,12 +6,14 @@ import re
 import sys
 import os
 
+# Declaring empty lists
 page_link = []
 articles_list = []
 link_list = []
 
 
 def integer_input_validator(input_variable):
+    # Function to check if input is an integer or not
     try:
         int(input_variable)
     except ValueError:
@@ -19,6 +21,7 @@ def integer_input_validator(input_variable):
         sys.exit(0)
 
 
+# Input to fetch true or false news
 news_type = input(
     "Select if you want to fetch for true news or false/parody/satire news. (Enter 1 for true snd 0 false): ")
 
@@ -34,6 +37,7 @@ else:
     print("Invalid input! Please input either 1 or 0.")
     sys.exit(0)
 
+# Input to decide which website to fetch from
 website = input(
     "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
 
@@ -51,6 +55,7 @@ else:
     print("Invalid input! Please enter values in range (1,2 or 3).")
     sys.exit(0)
 
+# Input to decide the topic of news
 category = input(
     f'Please enter the topic keyword corresponding to the website {website} for fetching articles: ')
 
@@ -71,10 +76,12 @@ elif website == "theindianexpress" and number_of_pages > 100:
     print("Number of pages are out of range. Value set to maximum (100)")
     number_of_pages = 100
 
+# Declaring headers to be used when visiting websites to avoid bot detection
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
 
+# Dictionary containing values corresponding to different websites for scraping data
 fetch_values_dictionary = {
     "hindustantimes": {
         "domain_link": "https://www.hindustantimes.com/",
@@ -168,10 +175,11 @@ fetch_values_dictionary = {
     },
 }
 
-
+# If excel file already exists, activate it and append new data in it
 if os.path.exists(file_name):
     excel = openpyxl.load_workbook(file_name)
     sheet = excel.active
+# Else create a new file
 else:
     excel = openpyxl.Workbook()
     sheet = excel.active
@@ -180,7 +188,9 @@ else:
 
 
 def fetch_news(fetch_values_dictionary, category, website):
+    # Funtion to fetch data from websites
 
+    # Editing category variable to be appended in the sheet
     if len(re.findall('news', category)) == 0:
         category = f'{category} News'
     else:
@@ -188,6 +198,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     category = category.capitalize()
 
     def article_fetcher():
+        # Function to fetch and create a list of news articles
 
         print("Fetching Articles...")
 
@@ -219,6 +230,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     article_fetcher()
 
     def link_list_maker():
+        # Function to extract links of all the articles from article list
 
         print("Getting Links...")
 
@@ -237,6 +249,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     link_list_maker()
 
     def content_fetcher():
+        # Function to extract news data from each article
 
         print("Fetching Content...")
 
@@ -327,5 +340,6 @@ def fetch_news(fetch_values_dictionary, category, website):
 
 fetch_news(fetch_values_dictionary, category, website)
 
+# Saving changes to the excel file
 print("Saving Excel File...")
 excel.save(file_name)
