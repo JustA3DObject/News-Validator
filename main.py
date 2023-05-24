@@ -4,10 +4,30 @@ from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 import re
 import sys
+import os
 
 page_link = []
 articles_list = []
 link_list = []
+
+news_type = input(
+    "Select if you want to fetch for true news or false/parody/satire news. (Enter 1 for true snd 0 false): ")
+try:
+    int(news_type)
+
+except ValueError:
+    print("Invalid input! Please enter integer type values.")
+    sys.exit(0)
+
+news_type = int(news_type)
+
+if news_type == 1:
+    file_name = 'True News.xlsx'
+elif news_type == 0:
+    file_name = 'False News.xlsx'
+else:
+    print("Invalid input! Please input either 1 or 0.")
+    sys.exit(0)
 
 website = input(
     "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
@@ -154,16 +174,14 @@ fetch_values_dictionary = {
 }
 
 
-def create_newsheet():
+if os.path.exists(file_name):
+    excel = openpyxl.load_workbook(file_name)
+    sheet = excel.active
+else:
     excel = openpyxl.Workbook()
     sheet = excel.active
     sheet.title = 'News'
     sheet.append(['Title', 'Text', 'Subject', 'Date'])
-
-
-def append_existingsheet():
-    excel = openpyxl.load_workbook('True News.xlsx')
-    sheet = excel.active
 
 
 def fetch_news(fetch_values_dictionary, category, website):
@@ -172,7 +190,7 @@ def fetch_news(fetch_values_dictionary, category, website):
         category = f'{category} News'
     else:
         category.replace('-news', ' News')
-    category.capitalize()
+    category = category.capitalize()
 
     def article_fetcher():
 
@@ -312,10 +330,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     content_fetcher()
 
 
-# create_newsheet()
-# append_existingsheet()
-
 fetch_news(fetch_values_dictionary, category, website)
 
-# print("Saving Excel File...")
-# excel.save('True News.xlsx')
+print("Saving Excel File...")
+excel.save(file_name)
