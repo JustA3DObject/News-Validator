@@ -34,6 +34,28 @@ else:
 category = input(
     f'Please enter the topic keyword corresponding to the website {website} for fetching articles: ')
 
+number_of_pages = input(
+    "Enter number of pages to fetch articles from (Max limit is 50 for Hindustan Times, 14 for NDTV and 100 for The Indian Express): ")
+
+try:
+    int(number_of_pages)
+
+except ValueError:
+    print("Invalid input! Please enter integer type values.")
+    sys.exit(0)
+
+number_of_pages = int(number_of_pages)
+
+if website == "hindustantimes" and number_of_pages > 50:
+    print("Number of pages are out of range. Value set to maximum (50)")
+    number_of_pages = 50
+elif website == "ndtv" and number_of_pages > 14:
+    print("Number of pages are out of range. Value set to maximum (14)")
+    number_of_pages = 14
+elif website == "theindianexpress" and number_of_pages > 100:
+    print("Number of pages are out of range. Value set to maximum (100)")
+    number_of_pages = 100
+
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
@@ -43,7 +65,7 @@ fetch_values_dictionary = {
         "domain_link": "https://www.hindustantimes.com/",
         "link": f'https://www.hindustantimes.com/{category}/page-',
         "range_start": 1,
-        "range_end": 2,
+        "range_end": 1 + number_of_pages,
         "articles_find_element": {
             "element": "section",
             "element_class": "listingPage"
@@ -73,7 +95,7 @@ fetch_values_dictionary = {
         "domain_link": "https://www.ndtv.com/",
         "link": f'https://www.ndtv.com/{category}/page-',
         "range_start": 1,
-        "range_end": 2,
+        "range_end": 1 + number_of_pages,
         "articles_find_element": {
             "element": "div",
             "element_class": "lisingNews"
@@ -103,7 +125,7 @@ fetch_values_dictionary = {
         "domain_link": "https://indianexpress.com/",
         "link": f'https://indianexpress.com/section/{category}/page/',
         "range_start": 2,
-        "range_end": 3,
+        "range_end": 2 + number_of_pages,
         "articles_find_element": {
             "element": "div",
             "element_class": "nation"
@@ -280,9 +302,9 @@ def fetch_news(fetch_values_dictionary, category, website):
                 except AttributeError:
                     body = "Null"
 
-                # if (title & body & date_time) != "Null":
-                #     sheet.append([title, body, category, date_time])
-                print(title, date_time, category, body)
+                if (title and body and date_time) != "Null":
+                    sheet.append([title, body, category, date_time])
+                # print(title, date_time, category, body)
 
             except Exception as e:
                 print(e)
