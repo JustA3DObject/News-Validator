@@ -10,14 +10,19 @@ page_link = []
 articles_list = []
 link_list = []
 
+
+def integer_input_validator(input_variable):
+    try:
+        int(input_variable)
+    except ValueError:
+        print("Invalid input! Please enter integer type values.")
+        sys.exit(0)
+
+
 news_type = input(
     "Select if you want to fetch for true news or false/parody/satire news. (Enter 1 for true snd 0 false): ")
-try:
-    int(news_type)
 
-except ValueError:
-    print("Invalid input! Please enter integer type values.")
-    sys.exit(0)
+integer_input_validator(news_type)
 
 news_type = int(news_type)
 
@@ -32,12 +37,7 @@ else:
 website = input(
     "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
 
-try:
-    int(website)
-
-except ValueError:
-    print("Invalid input! Please enter integer type values.")
-    sys.exit(0)
+integer_input_validator(website)
 
 website = int(website)
 
@@ -57,12 +57,7 @@ category = input(
 number_of_pages = input(
     "Enter number of pages to fetch articles from (Max limit is 50 for Hindustan Times, 14 for NDTV and 100 for The Indian Express): ")
 
-try:
-    int(number_of_pages)
-
-except ValueError:
-    print("Invalid input! Please enter integer type values.")
-    sys.exit(0)
+integer_input_validator(number_of_pages)
 
 number_of_pages = int(number_of_pages)
 
