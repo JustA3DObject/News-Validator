@@ -29,40 +29,48 @@ integer_input_validator(news_type)
 
 news_type = int(news_type)
 
-if news_type == 1:
-    file_name = 'True News.xlsx'
-elif news_type == 0:
+if news_type == 0:
     file_name = 'False News.xlsx'
+    # Input to decide which website to fetch from
+    website = input(
+        "Choose website to fetch news from. (Enter 1 for The Fauxy): ")
+    # Input the number of pages to fetch
+    number_of_pages = input(
+        "Enter number of pages to fetch articles from (Max limit is 40 for the Fauxy): ")
+
+elif news_type == 1:
+    file_name = 'True News.xlsx'
+    # Input to decide which website to fetch from
+    website = input(
+        "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
+    # Input the number of pages to fetch
+    number_of_pages = input(
+        "Enter number of pages to fetch articles from (Max limit is 50 for Hindustan Times, 14 for NDTV and 100 for The Indian Express): ")
+
 else:
     print("Invalid input! Please input either 1 or 0.")
     sys.exit(0)
 
-# Input to decide which website to fetch from
-website = input(
-    "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
-
 integer_input_validator(website)
+integer_input_validator(number_of_pages)
 
 website = int(website)
 
-if website == 1:
+if website == 1 and news_type == 1:
     website = "hindustantimes"
-elif website == 2:
+elif website == 2 and news_type == 1:
     website = "ndtv"
-elif website == 3:
+elif website == 3 and news_type == 1:
     website = "theindianexpress"
+elif website == 1 and news_type == 0:
+    website = "thefauxy"
 else:
-    print("Invalid input! Please enter values in range (1,2 or 3).")
+    print("Invalid input! Please enter values from the given options.")
     sys.exit(0)
 
 # Input to decide the topic of news
 category = input(
     f'Please enter the topic keyword corresponding to the website {website} for fetching articles: ')
-
-number_of_pages = input(
-    "Enter number of pages to fetch articles from (Max limit is 50 for Hindustan Times, 14 for NDTV and 100 for The Indian Express): ")
-
-integer_input_validator(number_of_pages)
 
 number_of_pages = int(number_of_pages)
 
@@ -173,14 +181,46 @@ fetch_values_dictionary = {
             "element_itemprop": "dateModified",
         },
     },
+    "thefauxy": {
+        "domain_link": "https://thefauxy.com/",
+        "link": f'https://thefauxy.com/{category}/page/',
+        "range_start": 1,
+        "range_end": 1 + number_of_pages,
+        "articles_find_element": {
+            "element": "div",
+            "element_class": "entries"
+        },
+        "articles_findall_element": {
+            "element": "article",
+            "element_class": "entry-card",
+        },
+        "link_find_element": {
+            "element": "h2",
+            "element_class": "entry-title",
+        },
+        "content_find_element": {
+            "element": "article",
+            "element_class": "post",
+        },
+        "title_find_element": {
+            "element": "h1",
+            "element_class": "page-title",
+        },
+        "datetime_find_element": {
+            "element": "time",
+            "element_class": "ct-meta-element-date",
+        },
+    },
 }
 
 # If excel file already exists, activate it and append new data in it
 if os.path.exists(file_name):
+    print(f'File {file_name} detetcted. Appending data to {file_name}')
     excel = openpyxl.load_workbook(file_name)
     sheet = excel.active
 # Else create a new file
 else:
+    print(f'Creating new file named {file_name}')
     excel = openpyxl.Workbook()
     sheet = excel.active
     sheet.title = 'News'
