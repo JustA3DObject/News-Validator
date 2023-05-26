@@ -355,6 +355,17 @@ def fetch_news(fetch_values_dictionary, category, website):
                                 "element"), itemprop=fetch_values_dictionary[website]["datetime_find_element"].get("element_itemprop")).get_text().strip()
 
                     date_time = date_time.replace('Updated: ', '')
+                    date_time = date_time.replace('Published: ', '')
+                    date_time = date_time.replace('Published ', '')
+                    date_time = date_time.replace('Updated ', '')
+                    date_time = date_time.replace('Published:', '')
+                    date_time = date_time.replace('Updated:', '')
+                    date_time = date_time.replace('Published', '')
+                    date_time = date_time.replace('Updated', '')
+                    date_time = date_time.replace('On ', '')
+                    date_time = date_time.replace('On: ', '')
+                    date_time = date_time.replace('On:', '')
+                    date_time = date_time.replace('On', '')
 
                 except AttributeError:
                     date_time = "Null"
