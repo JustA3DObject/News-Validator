@@ -235,7 +235,7 @@ def fetch_news(fetch_values_dictionary, category, website):
         category = f'{category} News'
     else:
         category.replace('-news', ' News')
-    category = category.capitalize()
+    category = category.title()
 
     def article_fetcher():
         # Function to fetch and create a list of news articles
