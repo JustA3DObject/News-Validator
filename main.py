@@ -332,7 +332,7 @@ def fetch_news(fetch_values_dictionary, category, website):
                     link = f'{fetch_values_dictionary[website].get("domain_link")}{link}'
                 link_list.append(link)
 
-    print(link_list)
+    link_list_maker()
 
     def content_fetcher():
         # Function to extract news data from each article
