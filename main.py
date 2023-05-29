@@ -5,6 +5,7 @@ from openpyxl import load_workbook
 import re
 import sys
 import os
+import numpy
 
 # Declaring empty lists
 page_link = []
@@ -33,26 +34,28 @@ if news_type == 0:
     file_name = 'False News.xlsx'
     # Input to decide which website to fetch from
     website = input(
-        "Choose website to fetch news from. (Enter 1 for The Fauxy): ")
+        "Choose website to fetch news from. (Enter 1 for The Fauxy, enter 2 for The Onion): ")
+    integer_input_validator(website)
     # Input the number of pages to fetch
     number_of_pages = input(
-        "Enter number of pages to fetch articles from (Max limit is 40 for the Fauxy): ")
+        "Enter number of pages to fetch articles from (Max limit is 40 for the Fauxy, 118 for The Onion): ")
+    integer_input_validator(number_of_pages)
+
 
 elif news_type == 1:
     file_name = 'True News.xlsx'
     # Input to decide which website to fetch from
     website = input(
         "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
+    integer_input_validator(website)
     # Input the number of pages to fetch
     number_of_pages = input(
         "Enter number of pages to fetch articles from (Max limit is 50 for Hindustan Times, 14 for NDTV and 100 for The Indian Express): ")
+    integer_input_validator(number_of_pages)
 
 else:
     print("Invalid input! Please input either 1 or 0.")
     sys.exit(0)
-
-integer_input_validator(website)
-integer_input_validator(number_of_pages)
 
 website = int(website)
 
@@ -64,6 +67,8 @@ elif website == 3 and news_type == 1:
     website = "theindianexpress"
 elif website == 1 and news_type == 0:
     website = "thefauxy"
+elif website == 2 and news_type == 0:
+    website = "theonion"
 else:
     print("Invalid input! Please enter values from the given options.")
     sys.exit(0)
@@ -83,6 +88,12 @@ elif website == "ndtv" and number_of_pages > 14:
 elif website == "theindianexpress" and number_of_pages > 100:
     print("Number of pages are out of range. Value set to maximum (100)")
     number_of_pages = 100
+elif website == "thefauxy" and number_of_pages > 40:
+    print("Number of pages are out of range. Value set to maximum (40)")
+    number_of_pages = 40
+elif website == "theonion" and number_of_pages > 118:
+    print("Number of pages are out of range. Value set to maximum (118)")
+    number_of_pages = 118
 
 # Declaring headers to be used when visiting websites to avoid bot detection
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
@@ -96,6 +107,7 @@ fetch_values_dictionary = {
         "link": f'https://www.hindustantimes.com/{category}/page-',
         "range_start": 1,
         "range_end": 1 + number_of_pages,
+        "range_offset": 1,
         "articles_find_element": {
             "element": "section",
             "element_class": "listingPage"
@@ -126,6 +138,7 @@ fetch_values_dictionary = {
         "link": f'https://www.ndtv.com/{category}/page-',
         "range_start": 1,
         "range_end": 1 + number_of_pages,
+        "range_offset": 1,
         "articles_find_element": {
             "element": "div",
             "element_class": "lisingNews"
@@ -156,6 +169,7 @@ fetch_values_dictionary = {
         "link": f'https://indianexpress.com/section/{category}/page/',
         "range_start": 2,
         "range_end": 2 + number_of_pages,
+        "range_offset": 1,
         "articles_find_element": {
             "element": "div",
             "element_class": "nation"
@@ -186,6 +200,7 @@ fetch_values_dictionary = {
         "link": f'https://thefauxy.com/{category}/page/',
         "range_start": 1,
         "range_end": 1 + number_of_pages,
+        "range_offset": 1,
         "articles_find_element": {
             "element": "div",
             "element_class": "entries"
@@ -211,6 +226,37 @@ fetch_values_dictionary = {
             "element_class": "ct-meta-element-date",
         },
     },
+    "theonion": {
+        "domain_link": "https://www.theonion.com/",
+        "link": f'https://www.theonion.com/breaking-news/{category}?startIndex=',
+        "range_start": 00,
+        "range_end": 00 + number_of_pages*20,
+        "range_offset": 20,
+        "articles_find_element": {
+            "element": "div",
+            "element_class": "sc-17uq8ex-0"
+        },
+        "articles_findall_element": {
+            "element": "article",
+            "element_class": "js_post_item",
+        },
+        "link_find_element": {
+            "element": "div",
+            "element_class": "sc-cw4lnv-5",
+        },
+        "content_find_element": {
+            "element": "div",
+            "element_class": "sc-101yw2y-9",
+        },
+        "title_find_element": {
+            "element": "h1",
+            "element_class": "sc-1efpnfq-0",
+        },
+        "datetime_find_element": {
+            "element": "time",
+            "element_class": "sc-uhd9ir-0",
+        },
+    },
 }
 
 # If excel file already exists, activate it and append new data in it
@@ -233,8 +279,8 @@ def fetch_news(fetch_values_dictionary, category, website):
     # Editing category variable to be appended in the sheet
     if len(re.findall('news', category)) == 0:
         category = f'{category} News'
-    else:
-        category.replace('-news', ' News')
+
+    category = category.replace('-', ' ')
     category = category.title()
 
     def article_fetcher():
@@ -243,7 +289,7 @@ def fetch_news(fetch_values_dictionary, category, website):
         print("Fetching Articles...")
 
         for i in range(fetch_values_dictionary[website].get("range_start"),
-                       fetch_values_dictionary[website].get("range_end")):
+                       fetch_values_dictionary[website].get("range_end"), fetch_values_dictionary[website].get("range_offset")):
             page_link = (
                 f'{fetch_values_dictionary[website].get("link")}{i}')
 
@@ -286,7 +332,7 @@ def fetch_news(fetch_values_dictionary, category, website):
                     link = f'{fetch_values_dictionary[website].get("domain_link")}{link}'
                 link_list.append(link)
 
-    link_list_maker()
+    print(link_list)
 
     def content_fetcher():
         # Function to extract news data from each article
