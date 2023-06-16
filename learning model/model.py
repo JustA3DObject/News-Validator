@@ -7,3 +7,7 @@ from nltk.corpus import stopwords
 nltk.download('stopwords')
 
 # print(stopwords.words('english'))
+
+news_dataset = pd.read_excel('learning model\\news.xlsx')
+
+# print(news_dataset)
