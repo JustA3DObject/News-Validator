@@ -6,6 +6,8 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import joblib
 
 nltk.download('stopwords')
 
@@ -62,3 +64,7 @@ X = vectorizer.transform(X)
 
 X_train, X_test, Y_train, Y_test = train_test_split(
     X, Y, test_size=0.2, stratify=Y, random_state=5)
+
+model = SGDClassifier(loss='hinge', penalty='l2',
+                      fit_intercept=True, shuffle=True)
+model.partial_fit(X_train, Y_train, classes=np.unique(Y))
