@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import accuracy_score
 import joblib
 
@@ -13,13 +14,13 @@ nltk.download('stopwords')
 
 # print(stopwords.words('english'))
 
-news_dataset = pd.read_excel('learning model\\news.xlsx')
+news_dataset = pd.read_excel('news.xlsx')
 
 # print(news_dataset)
 
 news_dataset = news_dataset.fillna('')
 
-news_dataset['Content'] = news_dataset["Title"] + ' ' + news_dataset["Text"]
+news_dataset['content'] = news_dataset["Title"] + ' ' + news_dataset["Text"]
 
 # print(news_dataset['content'])
 
