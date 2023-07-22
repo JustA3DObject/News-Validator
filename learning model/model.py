@@ -68,3 +68,8 @@ X_train, X_test, Y_train, Y_test = train_test_split(
 model = SGDClassifier(loss='hinge', penalty='l2',
                       fit_intercept=True, shuffle=True)
 model.partial_fit(X_train, Y_train, classes=np.unique(Y))
+
+X_train_prediction = model.predict(X_train)
+training_data_accuracy = accuracy_score(X_train_prediction, Y_train)
+
+print('Accuracy score of the training data : ', training_data_accuracy)
