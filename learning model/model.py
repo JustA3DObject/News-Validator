@@ -3,6 +3,8 @@ import pandas as pd
 import re
 import nltk
 from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
+
 
 nltk.download('stopwords')
 
@@ -38,3 +40,8 @@ def stemming(content):
     ]
     stemmed_content = ' '.join(stemmed_content)
     return stemmed_content
+
+
+news_dataset['content'] = news_dataset['content'].apply(stemming)
+
+# print(news_dataset['content'])
