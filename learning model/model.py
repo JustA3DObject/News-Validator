@@ -45,3 +45,6 @@ def stemming(content):
 news_dataset['content'] = news_dataset['content'].apply(stemming)
 
 # print(news_dataset['content'])
+
+X = news_dataset['content'].values
+Y = news_dataset['TorF'].values
