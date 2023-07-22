@@ -48,3 +48,13 @@ news_dataset['content'] = news_dataset['content'].apply(stemming)
 
 X = news_dataset['content'].values
 Y = news_dataset['TorF'].values
+
+# print(X)
+# print(Y)
+
+vectorizer = TfidfVectorizer()
+vectorizer.fit(X)
+
+X = vectorizer.transform(X)
+
+# print(X)
