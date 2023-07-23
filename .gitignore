@@ -164,5 +164,5 @@ cython_debug/
 # cfg files
 pyvenv.cfg
 
-# learning model
-Completed_model.joblib
+# Temporary files
+tempCodeRunnerFile.*
