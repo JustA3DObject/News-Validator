@@ -23,3 +23,14 @@ def stemming(content):
 
 
 X_new = [stemming(X)]
+
+vectorizer = load(open('vectorizer.pkl', "rb"))
+
+X_new = vectorizer.transform(X_new)
+
+predictor = load(open("model.pkl", "rb"))
+
+if predictor.predict(X_new) == 1:
+    print("The news is most certainly real.")
+else:
+    print("The news is probably fake or has been manipulated. Fact chekking is recommended.")
