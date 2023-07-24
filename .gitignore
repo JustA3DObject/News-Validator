@@ -166,3 +166,6 @@ pyvenv.cfg
 
 # Temporary files
 tempCodeRunnerFile.*
+
+#pickled files
+*.pkl
