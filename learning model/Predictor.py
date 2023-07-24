@@ -31,6 +31,6 @@ X_new = vectorizer.transform(X_new)
 predictor = load(open("model.pkl", "rb"))
 
 if predictor.predict(X_new) == 1:
-    print("The news is most certainly real.")
+    print("The news is most certainly TRUE.")
 else:
-    print("The news is probably fake or has been manipulated. Fact chekking is recommended.")
+    print("The news is probably FAKE or has been manipulated. Fact checking is recommended.")
