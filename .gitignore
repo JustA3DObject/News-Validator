@@ -167,5 +167,9 @@ pyvenv.cfg
 # Temporary files
 tempCodeRunnerFile.*
 
-#pickled files
+# Pickled files
 *.pkl
+
+# Data files
+*.xlsx
+*.csv
