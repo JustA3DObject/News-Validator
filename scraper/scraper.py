@@ -7,14 +7,17 @@ import sys
 import os
 import numpy
 
-# Declaring empty lists
+# Initializing empty lists
+
 page_link = []
 articles_list = []
 link_list = []
 
 
 def integer_input_validator(input_variable):
+
     # Function to check if input is an integer or not
+
     try:
         int(input_variable)
     except ValueError:
@@ -23,6 +26,7 @@ def integer_input_validator(input_variable):
 
 
 # Input to fetch true or false news
+
 news_type = input(
     "Select if you want to fetch for true news or false/parody/satire news. (Enter 1 for true snd 0 false): ")
 
@@ -32,11 +36,15 @@ news_type = int(news_type)
 
 if news_type == 0:
     file_name = 'False News.xlsx'
+
     # Input to decide which website to fetch from
+
     website = input(
         "Choose website to fetch news from. (Enter 1 for The Fauxy, enter 2 for The Onion): ")
     integer_input_validator(website)
+
     # Input the number of pages to fetch
+
     number_of_pages = input(
         "Enter number of pages to fetch articles from (Max limit is 40 for the Fauxy, 118 for The Onion): ")
     integer_input_validator(number_of_pages)
@@ -44,11 +52,15 @@ if news_type == 0:
 
 elif news_type == 1:
     file_name = 'True News.xlsx'
+
     # Input to decide which website to fetch from
+
     website = input(
         "Choose website to fetch news from. (Enter 1 for Hindustan Times, enter 2 for NDTV or enter 3 for The Indian Express): ")
     integer_input_validator(website)
+
     # Input the number of pages to fetch
+
     number_of_pages = input(
         "Enter number of pages to fetch articles from (Max limit is 50 for Hindustan Times, 14 for NDTV and 100 for The Indian Express): ")
     integer_input_validator(number_of_pages)
@@ -74,6 +86,7 @@ else:
     sys.exit(0)
 
 # Input to decide the topic of news
+
 category = input(
     f'Please enter the topic keyword corresponding to the website {website} for fetching articles: ')
 
@@ -96,11 +109,13 @@ elif website == "theonion" and number_of_pages > 118:
     number_of_pages = 118
 
 # Declaring headers to be used when visiting websites to avoid bot detection
+
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB", }
 
 # Dictionary containing values corresponding to different websites for scraping data
+
 fetch_values_dictionary = {
     "hindustantimes": {
         "domain_link": "https://www.hindustantimes.com/",
@@ -260,11 +275,14 @@ fetch_values_dictionary = {
 }
 
 # If excel file already exists, activate it and append new data in it
+
 if os.path.exists(file_name):
     print(f'File {file_name} detetcted. Appending data to {file_name}')
     excel = openpyxl.load_workbook(file_name)
     sheet = excel.active
+
 # Else create a new file
+
 else:
     print(f'Creating new file named {file_name}')
     excel = openpyxl.Workbook()
@@ -274,9 +292,11 @@ else:
 
 
 def fetch_news(fetch_values_dictionary, category, website):
+
     # Funtion to fetch data from websites
 
     # Editing category variable to be appended in the sheet
+
     if len(re.findall('news', category)) == 0:
         category = f'{category} News'
 
@@ -284,6 +304,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     category = category.title()
 
     def article_fetcher():
+
         # Function to fetch and create a list of news articles
 
         print("Fetching Articles...")
@@ -316,6 +337,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     article_fetcher()
 
     def link_list_maker():
+
         # Function to extract links of all the articles from article list
 
         print("Getting Links...")
@@ -335,6 +357,7 @@ def fetch_news(fetch_values_dictionary, category, website):
     link_list_maker()
 
     def content_fetcher():
+
         # Function to extract news data from each article
 
         print("Fetching Content...")
@@ -427,6 +450,7 @@ def fetch_news(fetch_values_dictionary, category, website):
 
                 if (title and body and date_time) != "Null":
                     sheet.append([title, body, category, date_time])
+
                 # print(title, date_time, category, body)
 
             except Exception as e:
@@ -438,5 +462,6 @@ def fetch_news(fetch_values_dictionary, category, website):
 fetch_news(fetch_values_dictionary, category, website)
 
 # Saving changes to the excel file
+
 print("Saving Excel File...")
 excel.save(file_name)
