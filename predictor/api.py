@@ -49,7 +49,7 @@ def news_valid(input_parameters : model_input):
 
     predictor = load(open("model.pkl", "rb"))
 
-    if predictor.predict(input_stringw) == 1:
+    if predictor.predict(input_string) == 1:
         return "The news is most certainly TRUE."
     else:
         return "The news is probably FAKE or has been manipulated. Fact checking is recommended."
