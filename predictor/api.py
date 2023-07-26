@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import pickle
+from pickle import load
 import json
 import re
 from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
 
 app = FastAPI()
 
@@ -12,12 +13,12 @@ class model_input(BaseModel):
     News_Title : str
     News_Body : str
 
-news_model = pickle.load(open("model.pkl", "rb"))
+news_model = load(open("model.pkl", "rb"))
 
 @app.post('/news_validator') #In point
 def news_valid(input_parameters : model_input):
 
-    input_data = input_parameters.json
+    input_data = input_parameters.json()
     input_dictionary = json.loads(input_data)
 
     title = input_dictionary["News_Title"]
@@ -41,15 +42,15 @@ def news_valid(input_parameters : model_input):
         stemmed_content = ' '.join(stemmed_content)
         return stemmed_content
 
-    processed_input = [stemming[input_string]]
+    processed_input = [stemming(input_string)]
 
     vectorizer = load(open('vectorizer.pkl', "rb"))
 
-    input_string = vectorizer.transform(input_string)
+    processed_input = vectorizer.transform(processed_input)
 
     predictor = load(open("model.pkl", "rb"))
 
-    if predictor.predict(input_string) == 1:
+    if predictor.predict(processed_input) == 1:
         return "The news is most certainly TRUE."
     else:
         return "The news is probably FAKE or has been manipulated. Fact checking is recommended."
