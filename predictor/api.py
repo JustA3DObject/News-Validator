@@ -43,6 +43,17 @@ def news_valid(input_parameters : model_input):
 
     processed_input = [stemming[input_string]]
 
+    vectorizer = load(open('vectorizer.pkl', "rb"))
+
+    input_string = vectorizer.transform(input_string)
+
+    predictor = load(open("model.pkl", "rb"))
+
+    if predictor.predict(input_stringw) == 1:
+        return "The news is most certainly TRUE."
+    else:
+        return "The news is probably FAKE or has been manipulated. Fact checking is recommended."
+
 
 
 
