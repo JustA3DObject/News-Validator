@@ -172,3 +172,6 @@ tempCodeRunnerFile.*
 # Data files
 *.xlsx
 *.csv
+
+# Testing files
+*test*.*
