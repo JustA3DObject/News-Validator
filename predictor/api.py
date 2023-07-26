@@ -17,3 +17,8 @@ def news_valid(input_parameters : model_input):
 
     input_data = input_parameters.json
     input_dictionary = json.loads(input_data)
+
+    title = input_dictionary["News_Title"]
+    body = input_dictionary["News_Body"]
+
+    input_list = [title, body]
