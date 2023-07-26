@@ -2,6 +2,8 @@ from fastapi import FastApi
 from pydantic import BaseModel
 import pickle
 import json
+import re
+from nltk.stem.porter import PorterStemmer
 
 app = FastApi()
 
@@ -22,3 +24,28 @@ def news_valid(input_parameters : model_input):
     body = input_dictionary["News_Body"]
 
     input_list = [title, body]
+
+    input_string = "".join(input_list)
+
+    port_stem = PorterStemmer()
+
+    def stemming(content):
+        stemmed_content = re.sub('[^0-9a-zA-Z]', ' ', content)
+        stemmed_content = stemmed_content.lower()
+        stemmed_content = stemmed_content.split()
+        stemmed_content = [
+            port_stem.stem(word)
+            for word in stemmed_content
+            if word not in stopwords.words('english')
+        ]
+        stemmed_content = ' '.join(stemmed_content)
+        return stemmed_content
+
+    processed_input = [stemming[input_string]]
+
+
+
+
+    
+
+
