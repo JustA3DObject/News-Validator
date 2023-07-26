@@ -1,11 +1,11 @@
-from fastapi import FastApi
+from fastapi import FastAPI
 from pydantic import BaseModel
 import pickle
 import json
 import re
 from nltk.stem.porter import PorterStemmer
 
-app = FastApi()
+app = FastAPI()
 
 class model_input(BaseModel):
 
