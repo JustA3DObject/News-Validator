@@ -54,10 +54,3 @@ def news_valid(input_parameters : model_input):
         return "The news is most certainly TRUE."
     else:
         return "The news is probably FAKE or has been manipulated. Fact checking is recommended."
-
-
-
-
-    
-
-
