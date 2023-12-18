@@ -2,7 +2,7 @@
 
 A news validation bot that tries to predict if a news is real or fake.
 
-## Contents:
+## Content:
 
 ### Scraper
 
