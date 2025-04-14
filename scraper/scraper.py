@@ -199,7 +199,7 @@ fetch_values_dictionary = {
         },
         "content_find_element": {
             "element": "div",
-            "element_class": "container native_story",
+            "element_class": "story_details",
         },
         "title_find_element": {
             "element": "h1",
@@ -243,7 +243,7 @@ fetch_values_dictionary = {
     },
     "theonion": {
         "domain_link": "https://www.theonion.com/",
-        "link": f'https://www.theonion.com/breaking-news/{category}?startIndex=',
+        "link": f'https://www.theonion.com/{category}?startIndex=',
         "range_start": 00,
         "range_end": 00 + number_of_pages*20,
         "range_offset": 20,
@@ -355,6 +355,7 @@ def fetch_news(fetch_values_dictionary, category, website):
                 link_list.append(link)
 
     link_list_maker()
+    print(link_list)
 
     def content_fetcher():
 
@@ -451,7 +452,7 @@ def fetch_news(fetch_values_dictionary, category, website):
                 if (title and body and date_time) != "Null":
                     sheet.append([title, body, category, date_time])
 
-                # print(title, date_time, category, body)
+                print(title, date_time, category, body)
 
             except Exception as e:
                 print(e)
